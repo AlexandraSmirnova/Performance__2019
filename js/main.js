@@ -1,116 +1,72 @@
 "use strict";
 
-const output = document.querySelector('.modal__value');
-const rangeSLider = document.querySelector('.adjust-bar.adjust-bar_theme_temp');
-
-const arrowLeftDevs = document.querySelector('.devices__paginator .paginator__arrow_left');
-const arrowRightDevs = document.querySelector('.devices__paginator .paginator__arrow_right');
-const panelCountDevs = document.querySelectorAll('.devices__panel').length;
-const devices = document.querySelector('.devices');
-const pagiantorDevs = document.querySelector('.devices__paginator');
-let currentPageDevs = 1;
-
-
-let curValue;
-let curRotate;
-let maxRotate = 0.42; // 150 градусов
-let minRotate = -0.42; // -150 градусов
-
-const MIN_VALUE = 26;
-const MAX_VALUE = 35;
-const INDICATOR_OFFSET = 265;
-
-const rotateToValue = function(rotate) {
-    return Math.floor((Math.abs(rotate * 360 * 1.73 + INDICATOR_OFFSET) / 53) + MIN_VALUE);
-}
-
-function getPosition(elem) {
-    const rect = elem.getBoundingClientRect();
-
-    return [
-        rect.left + (rect.right - rect.left) / 2,
-        rect.top + (rect.bottom - rect.top) / 2
-    ];
-}
-
-function getMouseAngle(event, centerElem) {
-    const pos = getPosition(centerElem);
-    let cursor = [event.clientX, event.clientY];
-    let rad;
-
-    if (event.targetTouches && event.targetTouches[0]) {
-        cursor = [event.targetTouches[0].clientX, event.targetTouches[0].clientY];
-    }
-
-    rad = Math.atan2(cursor[1] - pos[1], cursor[0] - pos[0]);
-    rad += Math.PI / 2;
-
-    return rad;
-}
-
-let knobDragged;
-let prevAngleRad = null;
-let prevRotate = null;
-
-function startDragging(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const rad = getMouseAngle(e, document.querySelector('.knob_center'));
-
-    knobDragged = true;
-    prevAngleRad = rad;
-    prevRotate = curRotate;
-}
-
-function stopDragging(e) {
-    knobDragged = false;
-}
-function setEvtListeners() {
-    const elem = document.querySelector('.knob-container');
-
-}
-
-setEvtListeners();
-
 document.addEventListener("DOMContentLoaded", function () {
+    const buttonsContainer = document.querySelector('.buttons-wrap');
+
+    buttonsContainer.innerHTML = '<button class="button button_yellow" type="button">Да</button>' +
+        '<button class="button">Нет</button>';
+
     var waterContainer = document.querySelector('.card.card_size_s:last-child');
 
-    waterContainer.innerHTML = 
-                '<div class="card-heading">' +
-                    '<div class="card-icon-wrap">' +
-                        '<img class="card-icon" src="img/kettle.svg">' +
-                    '</div>' +
-                    '<h3 class="card-title">Вода вскипела</h3>' +
-               ' </div>' +
-                '<div class="card-specs">' +
-                    '<p class="card-source">Чайник</p>' +
-                    '<p class="card-time card-time_block">16:20, Сегодня</p>' +
-                '</div>'
+    waterContainer.innerHTML =
+        '<div class="card-heading">' +
+        '<div class="card-icon-wrap">' +
+        '<img class="card-icon" src="img/kettle.svg">' +
+        '</div>' +
+        '<h3 class="card-title">Вода вскипела</h3>' +
+        ' </div>' +
+        '<div class="card-specs">' +
+        '<p class="card-source">Чайник</p>' +
+        '<p class="card-time card-time_block">16:20, Сегодня</p>' +
+        '</div>';
+
+    const fridgeInfoContainer = document.querySelector(".card_size_m:nth-child(8) .card-description");
+    setTimeout(function () {
+        const confirmPurchaseButton = document.querySelector(".buttons-wrap .button_yellow");
+        const purchaseListContainer = document.createElement('div');
+        const purchaseListTitle = document.createElement('p');
+        const purchaseList = document.createElement('ol');
+        const purchaseListItemOne = document.createElement('li');
+        const purchaseListItemTwo = document.createElement('li');
+
+        purchaseListContainer.setAttribute('class', 'purchase-list-wrap');
+        purchaseListTitle.setAttribute('class', 'card-description card-description_big description_critical');
+        purchaseListTitle.textContent = 'Список покупок:';
+        purchaseList.setAttribute('class', 'purchase-list');
+        purchaseListItemOne.setAttribute('class', 'purchase-list__item');
+        purchaseListItemOne.textContent = 'Хлеб';
+        purchaseListItemTwo.setAttribute('class', 'purchase-list__item');
+        purchaseListItemTwo.textContent = 'Молоко';
+
+        purchaseListContainer.appendChild(purchaseListTitle);
+        purchaseListContainer.appendChild(purchaseList);
+        purchaseList.appendChild(purchaseListItemOne);
+        purchaseList.appendChild(purchaseListItemTwo);
+
+        confirmPurchaseButton.onclick = () => {
+            fridgeInfoContainer.replaceWith(purchaseListContainer)
+            buttonsContainer.style.display = "none";
+        }
+    }, 500)
+
+
+    document.getElementsByClassName("header-menu__switcher")[0].addEventListener("click", function () {
+        document.getElementsByClassName("header-menu")[0].classList.toggle("header-menu_active")
+    })
 
 });
-
-
-const arrowLeftScens = document.querySelector('.scenarios__paginator .paginator__arrow_left');
-const arrowRightScens = document.querySelector('.scenarios__paginator .paginator__arrow_right');
-const panelCountScens = document.querySelectorAll('.scenarios__panel').length;
-const pageCountScens = document.querySelectorAll('.scenarios__page').length;
-const scenarios = document.querySelector('.scenarios');
-const pagiantorScens = document.querySelector('.scenarios__paginator');
-let currentPage = 1;
-
-const selectButton = document.querySelector('.filter__select-button');
 const selectButtonText = document.querySelector('.filter__select-button .button__text');
 const selectOptions = document.querySelectorAll('.filter__select-item');
 const popup = document.querySelector('.filter__select-popup');
 
 let widths = '';
-window.addEventListener('scroll', function() {
+window.addEventListener('scroll', function () {
     widths += document.querySelectorAll('body')[0].offsetWidth;
 
 });
 
 selectOptions.forEach(o => {
-    o.addEventListener('click', function(e) {
+    o.addEventListener('click', function (e) {
         document.querySelector('#' + e.target.dataset.group).checked = true;
 
         selectOptions.forEach(opt => opt.classList.toggle('filter__select-item_checked', false));
@@ -120,9 +76,7 @@ selectOptions.forEach(o => {
     })
 });
 
-
-
-var storage, initCriticalCam = function () {
+var initCriticalCam = function () {
     var u, m, p, v, h, y = new Array, g = document.querySelector(".critical-cam"), f = 0, S = 100, q = 100;
     g.style.backgroundPosition = "0px 0px", g.style.backgroundSize = "100%", g.style.filter = "brightness(100%)";
     var x = function (e, t) {
@@ -152,47 +106,20 @@ var storage, initCriticalCam = function () {
     }), document.addEventListener("pointerup", e), g.addEventListener("onpointerup", e)
 };
 
-function status(e) {
-    return 200 <= e.status && e.status < 300 ? Promise.resolve(e) : Promise.reject(new Error(e.statusText))
-}
+document.write("<a target=_blank href=\"http://ya.ru\"></a>");
 
-function json(e) {
-    return e.json()
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    const buttonsContainer = document.querySelector(".buttons-wrap");
-    const fridgeInfoContainer = document.querySelector(".card_size_m:nth-child(8) .card-description");
-    setTimeout(function() {
-        const confirmPurchaseButton = document.querySelector(".buttons-wrap .button_yellow");
-        const purchaseListContainer = document.createElement('div');
-        const purchaseListTitle = document.createElement('p');
-        const purchaseList = document.createElement('ol');
-        const purchaseListItemOne = document.createElement('li');
-        const purchaseListItemTwo = document.createElement('li');
-
-        purchaseListContainer.setAttribute('class', 'purchase-list-wrap');
-        purchaseListTitle.setAttribute('class', 'card-description card-description_big description_critical');
-        purchaseListTitle.textContent = 'Список покупок:';
-        purchaseList.setAttribute('class', 'purchase-list');
-        purchaseListItemOne.setAttribute('class', 'purchase-list__item');
-        purchaseListItemOne.textContent = 'Хлеб';
-        purchaseListItemTwo.setAttribute('class', 'purchase-list__item');
-        purchaseListItemTwo.textContent = 'Молоко';
-
-        purchaseListContainer.appendChild(purchaseListTitle);
-        purchaseListContainer.appendChild(purchaseList);
-        purchaseList.appendChild(purchaseListItemOne);
-        purchaseList.appendChild(purchaseListItemTwo);
-
-        confirmPurchaseButton.onclick = () => {
-            fridgeInfoContainer.replaceWith(purchaseListContainer)
-            buttonsContainer.style.display = "none";
-        }
-    }, 500)
-   
-
-    document.getElementsByClassName("header-menu__switcher")[0].addEventListener("click", function () {
-        document.getElementsByClassName("header-menu")[0].classList.toggle("header-menu_active")
+(function(w, d, n) {
+    var s = d.createElement('script');
+    s.src = '//zen.yandex.ru/widget-loader';
+    d.head.appendChild(s);
+    var c = d.createElement('div');
+    c.style.display = 'none';
+    d.body.appendChild(c);
+    w[n] = w[n] || [];
+    w[n].push(function() {
+     w.YandexZen.renderWidget({
+      container: c,
+      clid: [123,123],
+     });
     })
-}, !1);
+})(window, document, 'yandexZenAsyncCallbacks')
